@@ -34,6 +34,84 @@ only 5 of which are relevant to the assignment (Excel columns B, G, K, Q and W).
 it would be convenient to have an R function that would take as its input an Excel column name (as a character variable) 
 and output the corresponding column number. 
 
+###            Phil: where is this table? In coursera class #4?  How do I get it to my computer?
+###            Phil: in "programming assignment" in week 4 there is a zip file called "Programming Assignment 2 Data [832K]"
+###            Phil: okay I unzipped it and put 3 files in my working directory ~Coursera R Programming/Practice-programming-exercises-for-R
+###            Phil: the three files are Hospital_Revised_Flatfiles.pdf, hospital-data.csv, and outcome-of-care-measures.csv.
+###            Phil: hospital-data.csv is 13 columns, but outcome-of-care-measures.csv is 46 columns, so it must be that one.
+###            Phil: well, I don't think the raw .csv file has the character headers liks xl does, but that's a handy visual reference.
+###            Phil: The width goes all the way past Z column to AA, AB and all the way to AT. Instructions say just worry about A through Z.
+###            Phil: I think those are just references. Seems like I need a logical vector of the same length or something.
+###            Phil: would a list work for this? or maybe a named vector?
+
+
+```{r}
+colnameToNumber <- function(SELCT) { ## I think the argument needs to be a dot dot dot so I can put a few letters in.
+    ## no, the instructions say for one letter. This is good enough.
+    col_numbers <- 1:26   #I think I have to put this INSIDE the function otherwise I can't be sure it will be activated.
+    # names(col_numbers) <- letters # okay, I don't like using the names functin here.
+    #colname <- names(col_numbers) # this makes a character vector colname I think. No, that's not what I want.
+    #col_numbers[colname] # this works for one value kind of. It returns both the column name and also the column number.
+    col_letters <- letters # creates a letter vector a through z
+    my_letterTF <- col_letters == SELCT ## YES!!! this is a logical vector of the same length as col_letters and col_numbers
+    col_numbers[my_letterTF]
+    ## SELCT will be the input which will be a letter. I want that to cue the number.
+    
+}
+```
+
+###             Phil: Cleaning up: here is the r chunk:
+
+```{r}
+colnameToNumber <- function(SELCT) {    ## initiates the function.
+    col_numbers <- 1:26                 ## creates integer vector 1 through 26.
+    col_letters <- letters              ## creates character vector a through z.
+    my_letterTF <- col_letters == SELCT ## a logical vector of  same length as col_letters and col_numbers.
+    col_numbers[my_letterTF]            ## indexes and displays the column number when the logical is TRUE.
+    
+}
+    
+```
+
+###             Phil: the above worked, but okay, using the which function:
+
+```{r}
+colnameToNumber <- function(your_input) {   ## initiates the function.
+    col_numbers <- 1:26                     ## creates integer vector 1 through 26.
+    col_letters <- letters                  ## creates character vector a through z.
+    lower_input <- tolower(your_input)      ## converts to lower case if needed.
+    jif <- sum(lower_input == col_letters)   ## jif = 1 when SELCT in a-z, else 0.
+    if(jif == 0) {                          ## because TRUE = 1 & FALSE = 0
+        stop("no match for column name")    ## stops function if col name not there.
+    }
+    which(col_letters == lower_input)        ## finds the column number & prints
+}
+```
+
+###             Phil: Okay I did not concatonate and I looked at the example.
+###             Phil: Let me do that now
+
+
+```{r}
+colnameToNumber <- function(your_input) {   ## initiates the function.
+    col_numbers <- 1:26                     ## creates integer vector 1 through 26.
+    col_letters <- letters                  ## creates character vector a through z.
+    Aaz <- paste("a", col_letters, sep = "") 
+    Baz <- paste("b", col_letters, sep = "")
+    Caz <- paste("c", col_letters, sep = "")
+    Daz <- paste("d", col_letters, sep = "")
+    col_letters <- c(col_letters, Aaz, Baz, Caz, Daz)
+    lower_input <- tolower(your_input)      ## converts to lower case if needed.
+    jif <- sum(lower_input == col_letters)   ## jif = 1 when SELCT in a-z, else 0.
+    if(jif == 0) {                          ## because TRUE = 1 & FALSE = 0
+        stop("no match for column name")    ## stops function if col name not there.
+    }
+    which(col_letters == lower_input)        ## finds the column number & prints
+}
+```
+
+
+
 ### Instruction for this function
 
 For the first version of your function, just have it work for a column letter between a 
@@ -99,7 +177,7 @@ A working version of this function is given below, but try to do your own functi
 ### colnameToNumber function
 
 ```{r}
-colnameToNumber <- function(colname){
+colnameToNumber2 <- function(colname){
 # convert an Excel column name to the 
 # corresponding column number;
 # should not depend on whether the
@@ -145,7 +223,7 @@ colnameToNumber("ca")
 colnameToNumber("cz")
 colnameToNumber("da")
 colnameToNumber("dz")
-# colnameToNumber("zz") # should get error message
+colnameToNumber("zz") # should get error message
 ```
 
 Note because we used the built in **letters** character vector, the calls 
@@ -164,6 +242,25 @@ function, and then "fill in" its entries in a for loop using the colnameToNumber
 
 A working version of this function is given below, but try to do your own function before looking.
 
+
+```{r}
+
+
+
+
+
+
+
+
+```
+
+
+
+
+
+
+
+
 ### colvecToNumbers function
 
 ```{r}
@@ -179,15 +276,15 @@ if(!is.character(colvec)) stop("colvec input to colvecToNumbers is not character
 
 # create the integer vector to be output
     n <- length(colvec)
-    colnumbers <- integer(n)
+    colnumbers <- integer(n)  ##Phil this makes an empty vector length n = colvec's length
 
 # use colnameToNumber to get each entry of colnumbers
     for (i in 1:n) {
-        colname <- colvec[i]
-        colnumbers[i] <- colnameToNumber(colname) 
+        colname <- colvec[i] #Phil this places the values into colnumbers (next line) one at a time.
+        colnumbers[i] <- colnameToNumber(colname) # Phil colname is the "load" here, and i is the index
     }
 
-return(colnumbers)
+return(colnumbers) 
 }
 ```
 
