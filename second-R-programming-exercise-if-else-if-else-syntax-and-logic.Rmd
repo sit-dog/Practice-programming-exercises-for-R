@@ -40,11 +40,32 @@ a personal choice, balancing making code easy to read by having separate blocks 
 more spaces in indentations, with not having too many R commands extend over more than 1 line 
 (and in general, don't go over 80 characters in a line).
 The motivation is that code that is easier to read is easier to proofread and spot bugs in.
+```{r}
+
+JASPER <- TRUE 
+if(JASPER) JIMMY <- "army bud"          # Phil: first example in below block - very simple. condition has to be known 1st
+JIMMY
+
+```
+
+
+```{r}
+if (JASPER == "hard core") {  #third example below. 2nd is like this but shorter.
+    print ("you are a dork")
+} else {
+    print ("Jasper is a dork")
+}
+```
+
+
+
+
 
 ```
 if (condition1) short.code  # short.code is a short R command 
 # condition1 (and below, condition2, condition3) is a logical statement evaluating to TRUE or FALSE
 # when condition1 is true, execute the short.code statement
+# Phil: I'm not sure but this one looks like a very brief way to do it. Not exactly sure how it works, or if this is intro to the blocks below.
 
 
 
@@ -96,6 +117,8 @@ if (condition1) {
 # color scale values when there are only a couple possible color names.
 # This is, if nothing else, code that is easy to read/understand
 
+##Phil: this is a great example (below) of using short if statements.
+
 rgbvec <- 0 # when, after the if statements, rgbvec is still 0, throw an error
 if(color == "Magenta") rgbvec <- c(255, 0, 255)
 if(color == "ForestGreen") rgbvec <- c(34, 139, 34)
@@ -127,7 +150,7 @@ Constructing the function specified below is an exercise in using an if, else if
 Yes, one could do this by simply using the **signif** or **format** function, but the point here 
 is to practice if logic.
 
-We are given a p-value, denoted by pval, (a number between 0 and 1) and we want to convert it 
+We are given a p-value, denoted by _pval_, (a number between 0 and 1) and we want to convert it 
 to a value having 3 significant digits (specifically, we want the corresponding character string). 
 For example each of these values have 3 significant digits (for a number < 1, "leading 0's" to the right of the 
 decimal point before one encounters a non-zero digit "don't count" toward the number of significant digits):
@@ -189,6 +212,39 @@ Think about how to order the conditions in the if, else if, else statements. Sta
 end with larger p-values. Note more than 1 test within an if, else if, else block of code might be satisfied: in 
 that case the "consequence" of the first test that is satisfied will be carried out and then control will pass 
 to the first statement after the if, elseif, else block of code.
+
+```{r}
+pval3_sigfig <- function(pval) {
+    if(!is.numeric(pval)) {
+        stop("p-value input is not numeric") 
+    } else if (pval == 0) {
+        stop(" p-value = 0")
+    } else if(pval < 0) {
+        stop("p-value less than 0 - not possible")
+    } else if(pval > 1) {
+        stop("p-value greater than 1 - not possible")
+    } else if(pval > 0 && pval < 0.00001) {
+        stop("p-value less than 0.00001")
+    } else if (pval < 0.010) {
+        pval_char <- as.character(signif(pval, digits = 3)) 
+    } else if (pval < 0.10) {
+        pval_char <- as.character(signif(pval, digits = 3))     
+    } else {
+        pval_char <- as.character(signif(pval, digits = 3))      
+    }     
+    
+    return(pval_char)
+}
+    
+
+        
+    
+
+```
+
+
+
+
 
 Larger hint: the beginning and end of your function should resemble
 
@@ -261,6 +317,10 @@ if (pval < 0.00001) {
     pval.string <- as.character(round(pval, digits = 7))
     } else if (pval < 0.001) {
     pval.string <- as.character(round(pval, digits = 6))
+     # pval_char <- as.character(signif(pval, digits = 3)) 
+    # Phil: ah okay, digits in signif() are significant digits and digits in round() are all digits after zero.
+    # Phil: that is why I always had to choose 3 as my significant digits.
+    # Phil: both of these gave "0.5" when I entered "0.500" but I guess that's an okay result.
     } else if (pval < 0.01) {
     pval.string <- as.character(round(pval, digits = 5))
     } else if (pval < 0.1) {
